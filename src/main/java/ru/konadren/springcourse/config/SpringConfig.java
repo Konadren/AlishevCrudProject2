@@ -25,45 +25,39 @@ import java.util.Objects;
 @PropertySource("classpath:database.properties")
 public class SpringConfig implements WebMvcConfigurer {
 
-    private final ApplicationContext context;
+    private final ApplicationContext applicationContext;
     private final Environment env;
 
-
     @Autowired
-    public SpringConfig(ApplicationContext context, Environment env) {
-        this.context = context;
+    public SpringConfig(ApplicationContext applicationContext, Environment env) {
+        this.applicationContext = applicationContext;
         this.env = env;
     }
 
-    //бин для таймлифа
     @Bean
-    public SpringResourceTemplateResolver templateResolver(){
+    public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        templateResolver.setApplicationContext(context);
-        //задали папку где будут лежать представления
+        templateResolver.setApplicationContext(applicationContext);
         templateResolver.setPrefix("/WEB-INF/views/");
-        //задали расширения для представлений
         templateResolver.setSuffix(".html");
+        templateResolver.setCharacterEncoding("UTF-8");
         return templateResolver;
     }
 
-    //тоже конфигурируем представления
     @Bean
-    public SpringTemplateEngine templateEngine(){
+    public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.setTemplateResolver(templateResolver());
         templateEngine.setEnableSpringELCompiler(true);
         return templateEngine;
     }
 
-
-    //мы имплиментим интерфейс тогда, когда хотим шаблонизатор настроить под себя
-    //в нашем случае используем таймлиф, поэтому имплементим интерфейс WebMvcConfigurer
-    //в методе задаём шаблонизатор
     @Override
-    public void configureViewResolvers(ViewResolverRegistry registry){
+    public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
+        resolver.setCharacterEncoding("UTF-8");
+
         registry.viewResolver(resolver);
     }
 
@@ -83,7 +77,5 @@ public class SpringConfig implements WebMvcConfigurer {
     public JdbcTemplate jdbcTemplate(){
         return new JdbcTemplate(dataSource());
     }
-
-
 
 }
