@@ -2,9 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Adding a new person</title>
 </head>
 <body>
+<form th:method="POST" th:action="@{/librarian/people}" th:object="${person}">
+    <label for="fio">Enter a fio: </label>
+    <input th:field="*{fio}" type="text" id="fio"/>
+    <div style="color: red" th:if="${#fields.hasErrors('fio')}" th:errors="*{fio}">fio error</div>
+
+    <br/>
+
+    <label for="birthYear">Enter a birth`s year: </label>
+    <input th:field="*{birthYear}" type="text" id="birthYear"/>
+    <div th:if="${#fields.hasErrors('birthYear')}" th:errors="*{birthYear}">birthYear error</div>
+
+    <input type="submit" value="Add Person">
+</form>
 
 </body>
 </html>

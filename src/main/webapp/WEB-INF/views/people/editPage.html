@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Edit person</title>
 </head>
 <body>
+<form th:method="PATCH" th:action="@{/librarian/people/{id}(id=${person.getId()})}" th:object="${person}">
+    <label for="fio">Edit FIO:</label>
+    <input th:field="*{fio}" type="text" id="fio"/>
+    <div th:if="${#fields.hasErrors('fio')}" th:errors="*{fio}">fio error</div>
 
+
+    <br/>
+    <label for="birthYear">Edit birth`s year:</label>
+    <input th:field="*{birthYear}" type="text" id="birthYear"/>
+    <div th:if="${#fields.hasErrors('birthYear')}" th:errors="*{birthYear}">birthYear error</div>
+
+    <br/>
+
+
+    <input type="submit" value="Edit Person">
+
+</form>
 </body>
 </html>

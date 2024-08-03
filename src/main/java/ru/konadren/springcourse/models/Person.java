@@ -10,15 +10,14 @@ public class Person {
 
     @NotEmpty(message = "FIO shouldn`t be empty")
     @Size(min = 3, max = 70, message = "Too short or too long FIO")
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+$\n")
+    //@Pattern(regexp = "^[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+$\n")
     private String fio;
 
     @Min(value = 1900)
     private int birthYear;
 
 
-    public Person(int id, String fio, int birthYear) {
-        this.id = id;
+    public Person(String fio, int birthYear) {
         this.fio = fio;
         this.birthYear = birthYear;
     }

@@ -6,7 +6,15 @@
 </head>
 <body>
 
+<a href="/librarian/people/newPerson">Add a new book</a>
+<hr>
 
+<br/>
+
+<div th:each="person: ${people}">
+    <a th:href="@{/librarian/people/{id}(id=${person.getId()})}"
+       th:text="${'Name: ' + person.getFio() + ', birth`s year: ' + person.getBirthYear()}"></a>
+</div>
 
 </body>
 </html>
