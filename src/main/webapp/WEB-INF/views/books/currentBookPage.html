@@ -11,10 +11,10 @@
 <p th:text="${book.getReleaseYear()}">VALUE</p>
 
 
-<a th:href="@{/books/{id}/edit(id=${book.getId()})}">Edit</a>
+<a th:href="@{/librarian/books/{id}/edit(id=${book.getId()})}">Edit Book</a>
 
-<form th:method="DELETE" th:action="@{/books/{id}(id=${book.getId()})}">
-    <input type="submit" value="Delete"/>
+<form th:method="DELETE" th:action="@{/librarian/books/{id}(id=${book.getId()})}">
+    <input type="submit" value="Delete Book"/>
 </form>
 </body>
 </html>

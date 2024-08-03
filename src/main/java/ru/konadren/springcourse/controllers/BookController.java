@@ -63,7 +63,7 @@ public class BookController {
 
     // обновляем данные о человеке после перехода на editPage
     @PatchMapping("/{id}")
-    public String editPerson(@ModelAttribute("book") @Valid Book book,
+    public String editBook(@ModelAttribute("book") @Valid Book book,
                              BindingResult binding, @PathVariable("id") int id){
         //validator.validate(person, bindingResult);
 

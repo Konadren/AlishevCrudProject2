@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.konadren.springcourse.dao.wrapper.PersonMapper;
 import ru.konadren.springcourse.models.Person;
 
 import java.util.List;
@@ -26,7 +25,7 @@ public class PersonDAO {
     public Person show(int id){
         return template.query(
                 "SELECT * FROM People WHERE id=?", new Object[]{id},
-                new PersonMapper()
+                new BeanPropertyRowMapper<>(Person.class)
         ).stream().findAny().orElse(null);
     }
 

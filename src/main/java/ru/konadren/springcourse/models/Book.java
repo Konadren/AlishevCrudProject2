@@ -12,8 +12,7 @@ public class Book {
 
     private int releaseYear;
 
-    public Book(int id, String name, String author, int releaseYear) {
-        this.id = id;
+    public Book(String name, String author, int releaseYear) {
         this.bookName = name;
         this.author = author;
         this.releaseYear = releaseYear;
@@ -23,6 +22,10 @@ public class Book {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public String getBookName() {

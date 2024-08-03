@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.konadren.springcourse.dao.wrapper.BookWrapper;
 import ru.konadren.springcourse.models.Book;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class BookDAO {
 
     public Book show(int id){
         return template.query("SELECT * FROM Books WHERE id=?", new Object[]{id},
-                new BookWrapper()).stream().findAny().orElse(null);
+                new BeanPropertyRowMapper<>(Book.class)).stream().findAny().orElse(null);
     }
 
     public void save(Book book){
@@ -33,7 +32,7 @@ public class BookDAO {
     }
 
     public void update(int id, Book book){
-        template.update("UPDATE Book SET bookName=?, author=?, releaseYear=? WHERE id=?",
+        template.update("UPDATE Books SET bookName=?, author=?, releaseYear=? WHERE id=?",
                 book.getBookName(), book.getAuthor(),
                 book.getReleaseYear(), id);
     }
