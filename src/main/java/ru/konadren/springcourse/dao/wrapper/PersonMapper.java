@@ -1,4 +1,4 @@
-package ru.konadren.springcourse.dao;
+package ru.konadren.springcourse.dao.wrapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.konadren.springcourse.models.Person;

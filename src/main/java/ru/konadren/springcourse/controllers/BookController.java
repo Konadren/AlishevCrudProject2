@@ -1,25 +1,35 @@
 package ru.konadren.springcourse.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.konadren.springcourse.dao.BookDAO;
 import ru.konadren.springcourse.models.Book;
 
 @Controller
 @RequestMapping("/librarian/books")
 public class BookController {
+
+    private final BookDAO dao;
+
+    @Autowired
+    public BookController(BookDAO dao) {
+        this.dao = dao;
+    }
+
     @GetMapping()
     public String index(Model model){
-        //todo: получение всех людей из DAO и отображение во вьюхе
+        model.addAttribute("books", dao.index());
         return "books/index";
     }
 
     // если на /people нажать на кнопку "добавить человека"
     // совершается переход на страницу addingPage
     @GetMapping("/newBook")
-    public String goToAddingPage(Model model){
+    public String goToAddingPage(@ModelAttribute("book") Book book){
         return "books/addingPage";
     }
 
@@ -30,6 +40,7 @@ public class BookController {
         //todo: валидатор
         if (binding.hasErrors()) return "book/addingPage";
         //todo: сохранение человека (метод из ДАО)
+        dao.save(book);
         return "redirect:/librarian/books";
     }
 
@@ -38,6 +49,7 @@ public class BookController {
     @GetMapping("/{id}")
     public String showCurrentBook(@PathVariable("id") Integer id, Model model){
         //todo: извлекаем по айди и добавляем атрибут в модель
+        model.addAttribute("book", dao.show(id));
         return "people/currentPersonPage";
     }
 
@@ -45,7 +57,7 @@ public class BookController {
     // с currentPersonPage при клике на кнопку совершается переход на editPage
     @GetMapping("/{id}/edit")
     public String goToEditPersonPage(@PathVariable("id") int id, Model model){
-        //todo: добавление в модель
+        model.addAttribute("book", dao.show(id));
         return  "books/editPage";
     }
 
@@ -55,15 +67,15 @@ public class BookController {
                              BindingResult binding, @PathVariable("id") int id){
         //validator.validate(person, bindingResult);
 
-        if (binding.hasErrors()) return "book/editPage";
-        //personDAO.update(id, person);
+        if (binding.hasErrors()) return "books/editPage";
+        dao.update(id, book);
         return "redirect:/librarian/books";
     }
 
     // на currentPersonPage кнопка delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id){
-        // personDAO.delete(id);
+        dao.delete(id);
         return "redirect:/librarian/books";
     }
 }
