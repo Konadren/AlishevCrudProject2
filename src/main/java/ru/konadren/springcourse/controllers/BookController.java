@@ -38,7 +38,7 @@ public class BookController {
     public String createBook(@ModelAttribute("book") @Valid Book book,
                                BindingResult binding){
         //todo: валидатор
-        if (binding.hasErrors()) return "book/addingPage";
+        if (binding.hasErrors()) return "/books/addingPage";
         //todo: сохранение человека (метод из ДАО)
         dao.save(book);
         return "redirect:/librarian/books";
@@ -50,13 +50,13 @@ public class BookController {
     public String showCurrentBook(@PathVariable("id") Integer id, Model model){
         //todo: извлекаем по айди и добавляем атрибут в модель
         model.addAttribute("book", dao.show(id));
-        return "people/currentPersonPage";
+        return "books/currentBookPage";
     }
 
 
     // с currentPersonPage при клике на кнопку совершается переход на editPage
     @GetMapping("/{id}/edit")
-    public String goToEditPersonPage(@PathVariable("id") int id, Model model){
+    public String goToEditPersonPage(Model model, @PathVariable("id") int id){
         model.addAttribute("book", dao.show(id));
         return  "books/editPage";
     }

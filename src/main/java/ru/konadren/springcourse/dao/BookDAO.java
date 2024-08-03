@@ -24,12 +24,11 @@ public class BookDAO {
 
     public Book show(int id){
         return template.query("SELECT * FROM Books WHERE id=?", new Object[]{id},
-                new BookWrapper()
-        ).stream().findAny().orElse(null);
+                new BookWrapper()).stream().findAny().orElse(null);
     }
 
     public void save(Book book){
-        template.update("INSERT INTO Books(bookName, author, releaseDate) VALUES(?, ?, ?)",
+        template.update("INSERT INTO Books(bookName, author, releaseYear) VALUES(?, ?, ?)",
                 book.getBookName(), book.getAuthor(), book.getReleaseYear());
     }
 
@@ -40,6 +39,6 @@ public class BookDAO {
     }
 
     public void delete(int id){
-        template.update("DELETE * FROM Books WHERE id=?", id);
+        template.update("DELETE FROM Books WHERE id=?", id);
     }
 }

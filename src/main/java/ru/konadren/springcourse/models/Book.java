@@ -3,20 +3,27 @@ package ru.konadren.springcourse.models;
 import jakarta.validation.constraints.Pattern;
 
 public class Book {
+    private int id;
 
     private String bookName;
 
-    @Pattern(regexp = "^[А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+$\n")
+   // @Pattern(regexp = "[A-Z]\\w+ [A-Z]\\w+ A-Z]\\w+")
     private String author;
+
     private int releaseYear;
 
-    public Book(String name, String author, int releaseYear) {
+    public Book(int id, String name, String author, int releaseYear) {
+        this.id = id;
         this.bookName = name;
         this.author = author;
         this.releaseYear = releaseYear;
     }
 
     public Book(){}
+
+    public int getId() {
+        return id;
+    }
 
     public String getBookName() {
         return bookName;
