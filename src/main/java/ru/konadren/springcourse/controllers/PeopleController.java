@@ -1,15 +1,24 @@
 package ru.konadren.springcourse.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.konadren.springcourse.dao.PersonDAO;
 import ru.konadren.springcourse.models.Person;
 
 @Controller
 @RequestMapping("/librarian/people")
 public class PeopleController {
+    private final PersonDAO personDAO;
+
+
+    @Autowired
+    public PeopleController(PersonDAO personDAO) {
+        this.personDAO = personDAO;
+    }
 
 
     // страница, отображающая всех людей
@@ -17,13 +26,14 @@ public class PeopleController {
     @GetMapping()
     public String index(Model model){
         //todo: получение всех людей из DAO и отображение во вьюхе
+        model.addAttribute("people", personDAO.index());
         return "people/index";
     }
 
     // если на /people нажать на кнопку "добавить человека"
     // совершается переход на страницу addingPage
     @GetMapping("/newPerson")
-    public String goToAddingPage(Model model){
+    public String goToAddingPage(@ModelAttribute("person") Person person){
         return "people/addingPage";
     }
 
@@ -33,7 +43,8 @@ public class PeopleController {
                                BindingResult binding){
         //todo: валидатор
         if (binding.hasErrors()) return "people/addingPage";
-        //todo: сохранение человека (метод из ДАО)
+
+        personDAO.save(person);
         return "redirect:/librarian/people";
     }
 
@@ -41,7 +52,7 @@ public class PeopleController {
     // просто показываем человека и книги закрепленные за ним
     @GetMapping("/{id}")
     public String showCurrentPerson(@PathVariable("id") Integer id, Model model){
-        //todo: извлекаем по айди и добавляем атрибут в модель
+        model.addAttribute("person", personDAO.show(id));
         return "people/currentPersonPage";
     }
 
@@ -49,7 +60,7 @@ public class PeopleController {
     // с currentPersonPage при клике на кнопку совершается переход на editPage
     @GetMapping("/{id}/edit")
     public String goToEditPersonPage(@PathVariable("id") int id, Model model){
-        //todo: добавление в модель
+        model.addAttribute("person", personDAO.show(id));
         return  "people/editPage";
     }
 
@@ -60,14 +71,14 @@ public class PeopleController {
         //validator.validate(person, bindingResult);
 
         if (binding.hasErrors()) return "people/editPage";
-        //personDAO.update(id, person);
+        personDAO.update(id, person);
         return "redirect:/librarian/people";
     }
 
     // на currentPersonPage кнопка delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id){
-       // personDAO.delete(id);
+        personDAO.delete(id);
         return "redirect:/librarian/people";
     }
 
