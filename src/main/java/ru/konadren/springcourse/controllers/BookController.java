@@ -7,17 +7,23 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.konadren.springcourse.dao.BookDAO;
+import ru.konadren.springcourse.dao.PersonDAO;
 import ru.konadren.springcourse.models.Book;
+import ru.konadren.springcourse.models.Person;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/librarian/books")
 public class BookController {
 
     private final BookDAO dao;
+    private final PersonDAO personDAO;
 
     @Autowired
-    public BookController(BookDAO dao) {
+    public BookController(BookDAO dao, BookDAO bookDAO, PersonDAO personDAO) {
         this.dao = dao;
+        this.personDAO = personDAO;
     }
 
     @GetMapping()
@@ -47,9 +53,17 @@ public class BookController {
 
     // просто показываем человека и книги закрепленные за ним
     @GetMapping("/{id}")
-    public String showCurrentBook(@PathVariable("id") Integer id, Model model){
+    public String showCurrentBook(@PathVariable("id") Integer id, Model model,
+                                  @ModelAttribute("person") Person person){
         //todo: извлекаем по айди и добавляем атрибут в модель
         model.addAttribute("book", dao.show(id));
+        Optional<Person> bookOwner = dao.getBookOwner(id);
+        
+        if (bookOwner.isPresent())
+            model.addAttribute("owner", bookOwner.get());
+        else 
+            model.addAttribute("people", personDAO.index());
+        
         return "books/currentBookPage";
     }
 
@@ -78,4 +92,17 @@ public class BookController {
         dao.delete(id);
         return "redirect:/librarian/books";
     }
+
+    @PatchMapping("/{id}/assign")
+    public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person person){
+        dao.assign(id, person);
+        return "redirect:/librarian/books/" + id;
+    }
+
+    @PatchMapping("/{id}/release")
+    public String release(@PathVariable("id") int id){
+        dao.release(id);
+        return "redirect:/librarian/books/" + id;
+    }
+
 }

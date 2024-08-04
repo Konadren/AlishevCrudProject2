@@ -12,6 +12,7 @@ public class Book {
 
     private int releaseYear;
 
+
     public Book(String name, String author, int releaseYear) {
         this.bookName = name;
         this.author = author;
@@ -51,4 +52,5 @@ public class Book {
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
+
 }

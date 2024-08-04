@@ -53,6 +53,7 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String showCurrentPerson(@PathVariable("id") Integer id, Model model){
         model.addAttribute("person", personDAO.show(id));
+        model.addAttribute("books", personDAO.getBooksByPersonId(id));
         return "people/currentPersonPage";
     }
 

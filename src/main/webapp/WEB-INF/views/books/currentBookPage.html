@@ -10,11 +10,34 @@
 <p th:text="${book.getAuthor()}">VALUE</p>
 <p th:text="${book.getReleaseYear()}">VALUE</p>
 
+<div th:if="${owner}">
+    <span>Книга сейчас у человека с ФИО:</span> <span th:text="${owner.getFio()}">Person FIO</span>
 
-<a th:href="@{/librarian/books/{id}/edit(id=${book.getId()})}">Edit Book</a>
+    <form th:method="PATCH" th:action="@{/librarian/books/{id}/release(id=${book.getId()})}">
+        <input type="submit" value="Освободить книгу"/>
+    </form>
+</div>
+
+<div th:if="${people}">
+    <span>Книга свободна. Кому назначить?</span>
+    <form th:method="PATCH" th:action="@{/librarian/books/{id}/assign(id=${book.getId()})}">
+        <label for="person">Выберите человека:</label>
+        <select th:object="${person}" th:field="*{id}" id="person">
+            <option th:each="person : ${people}" th:value="${person.getId()}" th:text="${person.getFio()}">
+            </option>
+            <input type="submit" value="Назначить"/>
+        </select>
+    </form>
+</div>
+
+
+
+<form th:method="GET" th:action="@{/librarian/books/{id}/edit(id=${book.getId()})}">
+    <input type="submit" value="Редактировать книгу"/>
+</form>
 
 <form th:method="DELETE" th:action="@{/librarian/books/{id}(id=${book.getId()})}">
-    <input type="submit" value="Delete Book"/>
+    <input type="submit" value="Удалить книгу"/>
 </form>
 </body>
 </html>

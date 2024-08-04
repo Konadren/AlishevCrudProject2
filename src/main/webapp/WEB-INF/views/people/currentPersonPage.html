@@ -5,15 +5,40 @@
     <title>Current Person</title>
 </head>
 <body>
-
+<h2>Данные человека:</h2>
 <p th:text="${person.getFio()}">VALUE</p>
 <p th:text="${person.getBirthYear()}">VALUE</p>
 
+<hr>
+
+
+<h2>Информация о владении книгами:</h2>
+<div th:if="${books.isEmpty()}">
+    <p>Человек еще не взял ни одной книги</p>
+    <hr>
+</div>
+
+<div th:if="${!books.isEmpty()}">
+    <hr>
+    <b>Книги:</b>
+    <br/>
+    <table th:each="book: ${books}">
+        <tr  th:text="${book.getBookName() + ', ' + book.getAuthor() + ',' + book.getReleaseYear()}"></tr>
+    </table>
+</div>
+
+
+<form th:method="GET" th:action="@{/librarian/people/{id}/edit(id=${person.getId()})}">
+    <input type="submit" value="Редактировать">
+</form>
 
 <a th:href="@{/librarian/people/{id}/edit(id=${person.getId()})}">Edit person</a>
 
 <form th:method="DELETE" th:action="@{/librarian/people/{id}(id=${person.getId()})}">
-    <input type="submit" value="Delete Person"/>
+    <input type="submit" value="Удалить"/>
 </form>
+
+
+
 </body>
 </html>
