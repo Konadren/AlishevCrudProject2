@@ -6,18 +6,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.konadren.springcourse.dao.PersonDAO;
 import ru.konadren.springcourse.models.Person;
+import ru.konadren.springcourse.services.PeopleService;
 
 @Controller
 @RequestMapping("/librarian/people")
 public class PeopleController {
-    private final PersonDAO personDAO;
+
+    private final PeopleService peopleService;
 
 
     @Autowired
-    public PeopleController(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    public PeopleController(PeopleService peopleService) {
+        this.peopleService = peopleService;
     }
 
 
@@ -26,7 +27,7 @@ public class PeopleController {
     @GetMapping()
     public String index(Model model){
         //todo: получение всех людей из DAO и отображение во вьюхе
-        model.addAttribute("people", personDAO.index());
+        model.addAttribute("people", peopleService.findAll());
         return "people/index";
     }
 
@@ -44,7 +45,7 @@ public class PeopleController {
         //todo: валидатор
         if (binding.hasErrors()) return "people/addingPage";
 
-        personDAO.save(person);
+        peopleService.save(person);
         return "redirect:/librarian/people";
     }
 
@@ -52,8 +53,8 @@ public class PeopleController {
     // просто показываем человека и книги закрепленные за ним
     @GetMapping("/{id}")
     public String showCurrentPerson(@PathVariable("id") Integer id, Model model){
-        model.addAttribute("person", personDAO.show(id));
-        model.addAttribute("books", personDAO.getBooksByPersonId(id));
+        model.addAttribute("person", peopleService.findOne(id));
+        model.addAttribute("books", peopleService.getBooksByPersonId(id));
         return "people/currentPersonPage";
     }
 
@@ -61,7 +62,7 @@ public class PeopleController {
     // с currentPersonPage при клике на кнопку совершается переход на editPage
     @GetMapping("/{id}/edit")
     public String goToEditPersonPage(@PathVariable("id") int id, Model model){
-        model.addAttribute("person", personDAO.show(id));
+        model.addAttribute("person", peopleService.findOne(id));
         return  "people/editPage";
     }
 
@@ -72,14 +73,14 @@ public class PeopleController {
         //validator.validate(person, bindingResult);
 
         if (binding.hasErrors()) return "people/editPage";
-        personDAO.update(id, person);
+        peopleService.update(id, person);
         return "redirect:/librarian/people";
     }
 
     // на currentPersonPage кнопка delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id){
-        personDAO.delete(id);
+        peopleService.delete(id);
         return "redirect:/librarian/people";
     }
 

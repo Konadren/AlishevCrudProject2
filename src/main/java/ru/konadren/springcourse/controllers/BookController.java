@@ -6,10 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.konadren.springcourse.dao.BookDAO;
-import ru.konadren.springcourse.dao.PersonDAO;
 import ru.konadren.springcourse.models.Book;
 import ru.konadren.springcourse.models.Person;
+import ru.konadren.springcourse.services.BooksService;
+import ru.konadren.springcourse.services.PeopleService;
 
 import java.util.Optional;
 
@@ -17,18 +17,18 @@ import java.util.Optional;
 @RequestMapping("/librarian/books")
 public class BookController {
 
-    private final BookDAO dao;
-    private final PersonDAO personDAO;
+    private final PeopleService peopleService;
+    private final BooksService booksService;
 
     @Autowired
-    public BookController(BookDAO dao, BookDAO bookDAO, PersonDAO personDAO) {
-        this.dao = dao;
-        this.personDAO = personDAO;
+    public BookController(PeopleService peopleService, BooksService booksService) {
+        this.peopleService = peopleService;
+        this.booksService = booksService;
     }
 
     @GetMapping()
     public String index(Model model){
-        model.addAttribute("books", dao.index());
+        model.addAttribute("books", booksService.findAll());
         return "books/index";
     }
 
@@ -46,7 +46,7 @@ public class BookController {
         //todo: валидатор
         if (binding.hasErrors()) return "/books/addingPage";
         //todo: сохранение человека (метод из ДАО)
-        dao.save(book);
+        booksService.save(book);
         return "redirect:/librarian/books";
     }
 
@@ -55,14 +55,15 @@ public class BookController {
     @GetMapping("/{id}")
     public String showCurrentBook(@PathVariable("id") Integer id, Model model,
                                   @ModelAttribute("person") Person person){
-        //todo: извлекаем по айди и добавляем атрибут в модель
-        model.addAttribute("book", dao.show(id));
-        Optional<Person> bookOwner = dao.getBookOwner(id);
+        model.addAttribute("book", booksService.findOne(id));
+
+        // todo: сделать метод в репозитории, а потом использовать в сервисе
+        Optional<Person> bookOwner = booksService.getBookOwner(id);
         
         if (bookOwner.isPresent())
             model.addAttribute("owner", bookOwner.get());
         else 
-            model.addAttribute("people", personDAO.index());
+            model.addAttribute("people", peopleService.findAll());
         
         return "books/currentBookPage";
     }
@@ -71,7 +72,7 @@ public class BookController {
     // с currentPersonPage при клике на кнопку совершается переход на editPage
     @GetMapping("/{id}/edit")
     public String goToEditPersonPage(Model model, @PathVariable("id") int id){
-        model.addAttribute("book", dao.show(id));
+        model.addAttribute("book", booksService.findOne(id));
         return  "books/editPage";
     }
 
@@ -79,29 +80,32 @@ public class BookController {
     @PatchMapping("/{id}")
     public String editBook(@ModelAttribute("book") @Valid Book book,
                              BindingResult binding, @PathVariable("id") int id){
-        //validator.validate(person, bindingResult);
 
         if (binding.hasErrors()) return "books/editPage";
-        dao.update(id, book);
+        booksService.update(id, book);
         return "redirect:/librarian/books";
     }
 
     // на currentPersonPage кнопка delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id){
-        dao.delete(id);
+        booksService.delete(id);
         return "redirect:/librarian/books";
     }
 
     @PatchMapping("/{id}/assign")
     public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person person){
-        dao.assign(id, person);
+
+        //todo: сделать метод в репозитории и добавить в сервис
+        booksService.assign(id, person);
         return "redirect:/librarian/books/" + id;
     }
 
     @PatchMapping("/{id}/release")
     public String release(@PathVariable("id") int id){
-        dao.release(id);
+
+        //todo: сделать метод в репозитории и добавить в сервис
+        booksService.release(id);
         return "redirect:/librarian/books/" + id;
     }
 

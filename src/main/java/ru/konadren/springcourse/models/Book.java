@@ -1,17 +1,28 @@
 package ru.konadren.springcourse.models;
 
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "Books")
 public class Book {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "bookName")
     private String bookName;
 
    // @Pattern(regexp = "[A-Z]\\w+ [A-Z]\\w+ A-Z]\\w+")
+    @Column(name = "author")
     private String author;
 
+    @Column(name = "releaseYear")
     private int releaseYear;
 
+    @ManyToOne
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
+    public Person owner;
 
     public Book(String name, String author, int releaseYear) {
         this.bookName = name;
@@ -20,6 +31,14 @@ public class Book {
     }
 
     public Book(){}
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
 
     public int getId() {
         return id;
